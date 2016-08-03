@@ -34,6 +34,9 @@ class osmap_com_jevents {
 
     private static function parseLinksFromHTML($html)
     {
+        if(!class_exists('DomDocument')) {
+            return parseLinksFromHTMLUsingRegex($html);
+        }
         $output = [];
 
         $dom = new DOMDocument;
@@ -46,6 +49,31 @@ class osmap_com_jevents {
                     'url'   => $link->getAttribute('href'),
                     'id'    => $linkidMatches[1],
                     'name'  => $link->nodeValue
+                ];
+            }
+        }
+        return $output;
+    }
+    private static function parseLinksFromHTMLUsingRegex($html)
+    {
+        $workingarray = [];
+        $output = [];
+
+        $foundany = preg_match_all('#<a class="ev_link_row" href="(.+?)"  title=".+?">(.+?)</a>#', $html, $rawlinks);
+        if (!$foundany) { return []; }
+        //invert the array.
+        foreach ($rawlinks as $jid=>$juggler) {
+            foreach ($juggler as $mid=>$matchdata) {
+                $workingarray[$mid][$jid] = $matchdata;
+            }
+        }
+        foreach ($workingarray as $rawlink) {
+            $found = preg_match('#eventdetail/(\d+)/#',$rawlink[1], $linkidMatches);
+            if ($found) {
+                $output[] = [
+                    'url'   => $rawlink[1],
+                    'id'    => $linkidMatches[1],
+                    'name'  => $rawlink[2]
                 ];
             }
         }
