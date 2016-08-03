@@ -59,8 +59,10 @@ class osmap_com_jevents {
         $workingarray = [];
         $output = [];
 
-        $foundany = preg_match_all('#<a class="ev_link_row" href="(.+?)"  title=".+?">(.+?)</a>#', $html, $rawlinks);
-        if (!$foundany) { return []; }
+        $foundany = preg_match_all('#<a +class="ev_link_row" +href="(.+?)" +title=".+?">(.+?)</a>#', $html, $rawlinks);
+        if (!$foundany) {
+            return [];
+        }
         //invert the array.
         foreach ($rawlinks as $jid=>$juggler) {
             foreach ($juggler as $mid=>$matchdata) {
