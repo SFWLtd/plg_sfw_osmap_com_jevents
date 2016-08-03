@@ -35,7 +35,7 @@ class osmap_com_jevents {
     private static function parseLinksFromHTML($html)
     {
         if(!class_exists('DomDocument')) {
-            return parseLinksFromHTMLUsingRegex($html);
+            return self::parseLinksFromHTMLUsingRegex($html);
         }
         $output = [];
 
